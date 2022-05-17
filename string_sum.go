@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 // use these errors as appropriate, wrapping them with fmt.Errorf function
@@ -24,65 +25,50 @@ var (
 //
 // Use the errors defined above as described, again wrapping into fmt.Errorf
 
-// func main() {
-// 	fmt.Println(StringSum("3+5"))
-// 	fmt.Println(StringSum("35 + 54"))
-// 	fmt.Println(StringSum("-3+5"))
-// 	fmt.Println(StringSum("-3-56"))
-// 	fmt.Println(StringSum("--3+5"))
-// 	fmt.Println(StringSum("3+5+"))
-// 	fmt.Println(StringSum("   "))
-// 	fmt.Println(StringSum(""))
-// }
+//func main() {
+//	fmt.Println(StringSum("3+5"))
+//	fmt.Println(StringSum("35 + 54"))
+//	fmt.Println(StringSum("-3+5"))
+//	fmt.Println(StringSum("-3-56"))
+//	fmt.Println(StringSum("--3+5"))
+//	fmt.Println(StringSum("3+5+"))
+//	fmt.Println(StringSum("   "))
+//	fmt.Println(StringSum(""))
+//}
 
 func StringSum(input string) (output string, err error) {
 	if input == "" {
-		return "", errorEmptyInput
+		return "", fmt.Errorf("invalid input: %w", errorEmptyInput)
 	}
-	var first, second, op1, op2 string
+	params := []string{}
+	m, n := 0, 0
 	for i, char := range input {
-		if char == 32 {
-			continue
+		n++
+		if i != 0 && (char == 43 || char == 45) {
+			params = append(params, input[m:n-1])
+			m = i
+		} else if n >= len(input) && m != 0 {
+			params = append(params, input[m:])
+			break
 		}
-		if i == 0 && (char == 45 || char == 43) {
-			op1 = string(char)
-		} else if op2 == "" {
-			_, err := strconv.Atoi(string(char))
-			if err != nil {
-				if char == 45 || char == 43 {
-					if op1 != "" && first == "" {
-						return "", errorNotTwoOperands
-					}
-					op2 = string(char)
-					continue
-				}
-				return "", fmt.Errorf("invalid input := %w", err)
-			}
-			first += string(char)
-		} else {
-			_, err := strconv.Atoi(string(char))
-			if err != nil {
-				return "", fmt.Errorf("invalid input := %w", err)
-			}
-			second += string(char)
-		}
+	}
+	if len(params) == 0 {
+		return "", fmt.Errorf("%w", errorEmptyInput)
+	}
+	if len(params) != 2 {
+		return "", fmt.Errorf("%w", errorNotTwoOperands)
+	}
 
+	a, err := strconv.Atoi(strings.Trim(params[0], " "))
+	if err != nil {
+		return "", fmt.Errorf("%w", err)
 	}
-	if first == "" && second == "" && op1 == "" && op2 == "" {
-		return "", errorEmptyInput
+	b, err := strconv.Atoi(strings.Trim(params[1], " "))
+	if err != nil {
+		return "", fmt.Errorf("%w", err)
 	}
-	if op2 != "+" && op2 != "-" {
-		return "", errorNotTwoOperands
-	} else {
-		a, err := strconv.Atoi(op1 + first)
-		if err != nil {
-			return "", fmt.Errorf("invalid input := %w", err)
-		}
-		b, err := strconv.Atoi(op2 + second)
-		if err != nil {
-			return "", fmt.Errorf("invalid input := %w", err)
-		}
-		output = strconv.Itoa(a + b)
-	}
+	res := a + b
+	output = strconv.Itoa(res)
+
 	return output, nil
 }
