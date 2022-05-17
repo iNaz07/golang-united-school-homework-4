@@ -24,12 +24,12 @@ var (
 // with fmt.Errorf function 35 + 46
 //
 // Use the errors defined above as described, again wrapping into fmt.Errorf
-
+//
 //func main() {
 //	fmt.Println(StringSum("3+5"))
-//	fmt.Println(StringSum("35 + 54"))
-//	fmt.Println(StringSum("-3+5"))
-//	fmt.Println(StringSum("-3-56"))
+//	fmt.Println(StringSum("+ 35 + 54 +"))
+//	fmt.Println(StringSum("-3-5"))
+//	fmt.Println(StringSum("-5"))
 //	fmt.Println(StringSum("--3+5"))
 //	fmt.Println(StringSum("3+5+"))
 //	fmt.Println(StringSum("   "))
@@ -37,6 +37,8 @@ var (
 //}
 
 func StringSum(input string) (output string, err error) {
+
+	input = strings.ReplaceAll(input, " ", "")
 	if input == "" {
 		return "", fmt.Errorf("invalid input: %w", errorEmptyInput)
 	}
@@ -47,11 +49,12 @@ func StringSum(input string) (output string, err error) {
 		if i != 0 && (char == 43 || char == 45) {
 			params = append(params, input[m:n-1])
 			m = i
-		} else if n >= len(input) && m != 0 {
+		} else if n >= len(input) {
 			params = append(params, input[m:])
 			break
 		}
 	}
+
 	if len(params) == 0 {
 		return "", fmt.Errorf("%w", errorEmptyInput)
 	}
