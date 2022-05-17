@@ -30,7 +30,7 @@ var (
 //	fmt.Println(StringSum("+ 35 + 54 +"))
 //	fmt.Println(StringSum("-3-5"))
 //	fmt.Println(StringSum("-5"))
-//	fmt.Println(StringSum("--3+5"))
+//	fmt.Println(StringSum("-385"))
 //	fmt.Println(StringSum("3+5+"))
 //	fmt.Println(StringSum("   "))
 //	fmt.Println(StringSum(""))
@@ -62,11 +62,11 @@ func StringSum(input string) (output string, err error) {
 		return "", fmt.Errorf("%w", errorNotTwoOperands)
 	}
 
-	a, err := strconv.Atoi(strings.Trim(params[0], " "))
+	a, err := strconv.Atoi(params[0])
 	if err != nil {
 		return "", fmt.Errorf("%w", err)
 	}
-	b, err := strconv.Atoi(strings.Trim(params[1], " "))
+	b, err := strconv.Atoi(params[1])
 	if err != nil {
 		return "", fmt.Errorf("%w", err)
 	}
